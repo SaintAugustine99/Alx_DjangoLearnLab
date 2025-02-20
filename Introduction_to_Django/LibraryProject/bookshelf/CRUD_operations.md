@@ -24,4 +24,3 @@ book.delete()
 print(Book.objects.all())
 # Document in delete.md
 # Output: <QuerySet []>
-
