@@ -3,7 +3,7 @@ from django.urls import path
 from .views import register, path, include, admin_view, librarian_view, member_view, add_book, edit_book, delete_book
 from django.contrib.auth.views import LoginView, LogoutView
 views.register
-add_book, edit_book
+" add_book/, edit_book/""
 
 urlpatterns = [
     path('register/', register, name='register'),
