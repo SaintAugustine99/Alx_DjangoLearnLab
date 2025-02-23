@@ -20,3 +20,5 @@ class LibraryDetailView(DetailView):
     template_name = 'relationship_app/library_detail.html'  # Use the correct template path
     context_object_name = 'library'  # Name of the context variable in the template
 
+
+
