@@ -4,6 +4,16 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
+from django.shortcuts import render
+from .models import Book
+from django.views.generic import DetailView
+from .models import Library
+
+def list_books(request):
+    books = Book.objects.all()
+    return render(request, 'relationship_app/list_books.html', {'books': books})
+
+
 
 # Custom registration view
 def register(request):
@@ -11,7 +21,7 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()  # Save the new user
-            return redirect('login')  # Redirect to the login page after registration
+            return redirect('home')  # Redirect to the login page after registration
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
@@ -25,3 +35,11 @@ class CustomLoginView(LoginView):
 class CustomLogoutView(LogoutView):
     template_name = 'relationship_app/logout.html'  # Use the logout template
 
+def list_books(request):
+    books = Book.objects.all()
+    return render(request, 'relationship_app/list_books.html', {'books': books})
+
+class LibraryDetailView(DetailView):
+    model = Library
+    template_name = 'relationship_app/library_detail.html'
+    context_object_name = 'library'
