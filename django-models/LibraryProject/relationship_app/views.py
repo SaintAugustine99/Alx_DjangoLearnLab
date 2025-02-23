@@ -1,25 +1,35 @@
-from django.shortcuts import render
-
-# Create your views here.
 # relationship_app/views.py
-from django.shortcuts import render
-from .models import Book
-from django.views.generic.detail import DetailView
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout
 
-# Function-based view to list all books
-def list_books(request):
-    books = Book.objects.all()  # Fetch all books from the database
-    return render(request, 'relationship_app/list_books.html', {'books': books})
+# Registration view
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log the user in after registration
+            return redirect('list_books')  # Redirect to a success page (e.g., list_books)
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
 
-# relationship_app/views.py
-from django.views.generic import DetailView
-from .models import Library
+# Login view
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)  # Log the user in
+            return redirect('list_books')  # Redirect to a success page (e.g., list_books)
+    else:
+        form = AuthenticationForm()
+    return render(request, 'relationship_app/login.html', {'form': form})
 
-# Class-based view to display details for a specific library
-class LibraryDetailView(DetailView):
-    model = Library
-    template_name = 'relationship_app/library_detail.html'  # Use the correct template path
-    context_object_name = 'library'  # Name of the context variable in the template
-
+# Logout view
+def user_logout(request):
+    logout(request)  # Log the user out
+    return redirect('login')  # Redirect to the login page
 
 
