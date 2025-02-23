@@ -44,4 +44,3 @@ if __name__ == "__main__":
 
     # Retrieve the librarian for a library
     get_librarian_for_library("Central Library")
-
