@@ -17,4 +17,5 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
     
-class CustomUserManager(BaseUserManager):", "create_user", "create_superuser"
+class CustomUserManager(BaseUserManager):
+    ", "create_user", "create_superuser"
