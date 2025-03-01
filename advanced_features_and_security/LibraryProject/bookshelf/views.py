@@ -6,3 +6,5 @@ from django.shortcuts import render
 def edit_blog_post(request, post_id):
     # Your view logic here
     pass
+
+"book_list", "books"
