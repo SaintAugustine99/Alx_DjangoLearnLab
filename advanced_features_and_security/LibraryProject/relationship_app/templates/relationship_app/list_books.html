@@ -14,3 +14,10 @@
     </ul>
 </body>
 </html>
+
+<!-- form_example.html -->
+<form method="post" action="{% url 'form_action_url' %}">
+    {% csrf_token %}
+    <!-- Your form fields here -->
+    <button type="submit">Submit</button>
+</form>
