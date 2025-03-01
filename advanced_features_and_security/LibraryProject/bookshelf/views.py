@@ -18,3 +18,13 @@ def edit_blog_post(request, post_id):
     pass
 
 "book_list", "books"
+
+def create_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    return render(request, 'bookshelf/form_example.html', {'form': 
