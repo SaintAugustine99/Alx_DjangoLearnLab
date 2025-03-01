@@ -155,3 +155,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Ensure cookies are sent over HTTPS only
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+# Use the `X-Forwarded-Proto` header to determine the original request scheme
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
