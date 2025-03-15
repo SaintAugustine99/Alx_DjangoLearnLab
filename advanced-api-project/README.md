@@ -30,3 +30,14 @@ This project demonstrates advanced Django REST Framework usage with generic view
 
 - Anonymous users can view books
 - Only authenticated users can create, update, or delete books
+
+## API Filtering, Searching, and Ordering
+
+### Filtering Options
+The API supports filtering on the following Book fields:
+- `title`: Filter by book title (case-insensitive contains)
+- `publication_year`: Filter by exact publication year
+- `author`: Filter by author ID
+- `min_year`: Filter books published on or after this year
+- `max_year`: Filter books published on or before this year
+- `author_name`: Filter by author name (case-insensitive contains)

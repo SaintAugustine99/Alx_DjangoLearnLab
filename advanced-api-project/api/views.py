@@ -1,12 +1,16 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, filters
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import BookFilter
+from .custom_filters import AdvancedSearchFilter
+from .pagination import BookPagination
 
 class AuthorList(generics.ListCreateAPIView):
     queryset = Author.objects.all()
@@ -19,6 +23,8 @@ class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
 class BookList(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, 
+                      filters.OrderingFilter, AdvancedSearchFilter]
 
 class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
@@ -33,6 +39,7 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]
+     pagination_class = BookPagination
 
 class BookDetailView(generics.RetrieveAPIView):
     """
@@ -91,3 +98,20 @@ class BookDeleteView(generics.DestroyAPIView):
         This allows us to perform additional actions before deletion if needed.
         """
         instance.delete()
+
+        class BookListView(generics.ListAPIView):
+    """
+    API endpoint that allows books to be viewed with filtering, searching, and ordering.
+    
+    Query Parameters:
+    - Filtering: ?author=1&publication_year=2020&min_year=2000&max_year=2022&title=Harry&author_name=Rowling
+    - Searching: ?search=Harry
+    - Ordering: ?ordering=publication_year or ?ordering=-title (descending)
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = BookFilter
+    search_fields = ['title', 'author__name']
+    ordering_fields = ['title', 'publication_year', 'author__name']
+    ordering = ['title']  # Default ordering
