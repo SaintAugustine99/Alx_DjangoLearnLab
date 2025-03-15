@@ -41,3 +41,14 @@ The API supports filtering on the following Book fields:
 - `min_year`: Filter books published on or after this year
 - `max_year`: Filter books published on or before this year
 - `author_name`: Filter by author name (case-insensitive contains)
+
+## Testing the API
+
+This project includes comprehensive test coverage for all API endpoints and functionality.
+
+### Running the Tests
+
+To run the test suite, use the following command:
+
+```bash
+python manage.py test api
