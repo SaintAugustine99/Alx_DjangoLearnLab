@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import BookFilter
 from .custom_filters import AdvancedSearchFilter
 from .pagination import BookPagination
+from django_filters import rest_framework
 
 class AuthorList(generics.ListCreateAPIView):
     queryset = Author.objects.all()
