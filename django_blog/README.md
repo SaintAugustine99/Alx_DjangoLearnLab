@@ -258,3 +258,43 @@ Log in to your account
 Navigate to a post you authored
 Click the "Delete" button
 Confirm deletion on the confirmation page
+
+
+Comment System Documentation
+Overview
+The comment system allows users to engage with blog posts by leaving comments. Only authenticated users can post comments, and users can only edit or delete their own comments.
+Features
+
+View Comments: All visitors can read comments on blog posts.
+Add Comments: Authenticated users can post new comments.
+Edit Comments: Users can edit their own comments.
+Delete Comments: Users can delete their own comments.
+
+User Permissions
+
+Anonymous Users: Can only view comments
+Authenticated Users: Can create comments and manage (edit/delete) their own comments
+Comment Authors: Have full control over their own comments only
+
+How to Use
+
+Viewing Comments: Navigate to any blog post to see all associated comments at the bottom of the page.
+Adding a Comment:
+
+Log in to your account
+Navigate to the blog post
+Use the comment form at the bottom of the post
+Enter your comment text and click "Submit"
+
+
+Editing a Comment:
+
+Click the "Edit" button next to your comment
+Modify the text as needed
+Click "Save Changes" to update
+
+
+Deleting a Comment:
+
+Click the "Delete" button next to your comment
+Confirm deletion on the confirmation page

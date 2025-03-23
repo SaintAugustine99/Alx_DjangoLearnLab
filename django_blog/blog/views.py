@@ -2,13 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post
+from .models import Post, Comment
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import RegisterForm, UserUpdateForm, PostForm
+from .forms import RegisterForm, UserUpdateForm, PostForm, CommentForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 def post_list(request):
     posts = Post.objects.order_by('-published_date')
@@ -16,7 +16,65 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/post_detail.html', {'post': post})
+    comments = post.comments.all()  # Get all comments for this post
+    
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)  # Changed variable name from form to comment_form
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.author = request.user
+            new_comment.save()
+            messages.success(request, 'Your comment has been added!')
+            return redirect('post_detail', pk=pk)
+    else:
+        comment_form = CommentForm()  # Changed variable name from form to comment_form
+    
+    # Changed the context to use the variables defined above
+    return render(request, 'blog/post_detail.html', {
+        'post': post,
+        'comments': comments,
+        'comment_form': comment_form,
+        'new_comment': None  # Initially set to None since we only want to set it when a new comment is created
+    })
+
+@login_required
+def comment_edit(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    
+    # Check if the logged-in user is the author of the comment
+    if request.user != comment.author:
+        messages.error(request, "You can't edit someone else's comment.")
+        return redirect('post_detail', pk=comment.post.pk)
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your comment has been updated!')
+            return redirect('post_detail', pk=comment.post.pk)
+    else:
+        form = CommentForm(instance=comment)
+    
+    return render(request, 'blog/comment_edit.html', {'form': form, 'comment': comment})
+
+@login_required
+def comment_delete(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    
+    # Check if the logged-in user is the author of the comment
+    if request.user != comment.author:
+        messages.error(request, "You can't delete someone else's comment.")
+        return redirect('post_detail', pk=comment.post.pk)
+    
+    post_pk = comment.post.pk
+    
+    if request.method == 'POST':
+        comment.delete()
+        messages.success(request, 'Your comment has been deleted!')
+        return redirect('post_detail', pk=post_pk)
+    
+    return render(request, 'blog/comment_delete.html', {'comment': comment})
 
 def register(request):
     if request.method == 'POST':
