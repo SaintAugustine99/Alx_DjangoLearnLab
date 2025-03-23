@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify  # Added missing import
 from .models import Post, Comment, Tag
 from django.db.models import Q
+from blog.models import Post
+from .forms import TagWidget
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -33,10 +35,11 @@ class PostForm(forms.ModelForm):
     
     class Meta:  # Moved inside PostForm class
         model = Post
-        fields = ['title', 'content', 'tags_input']
+        fields = ['title', 'content', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+            'tags': TagWidget(), 
         }
     
     def __init__(self, *args, **kwargs):
