@@ -27,6 +27,8 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
 
     # Comment URLs
+    path('post/<int:post_id>/comments/new/', views.comment_create, name='comment_create'),
     path('comment/<int:pk>/edit/', views.comment_edit, name='comment_edit'),
+    path('comment/<int:pk>/update/', views.comment_edit, name='comment_update'),  # Alternative URL pointing to the same view
     path('comment/<int:pk>/delete/', views.comment_delete, name='comment_delete'),
 ]
