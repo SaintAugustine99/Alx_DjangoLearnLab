@@ -1,0 +1,32 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="tag-posts">
+    <h1>Posts tagged with "{{ tag.name }}"</h1>
+    
+    {% if posts %}
+        <div class="posts-list">
+            {% for post in posts %}
+                <div class="post-item">
+                    <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+                    <p class="post-meta">By {{ post.author }} on {{ post.created_at|date:"F d, Y" }}</p>
+                    
+                    <div class="post-tags">
+                        {% for post_tag in post.tags.all %}
+                            <a href="{% url 'tag_posts' slug=post_tag.slug %}" 
+                               class="tag {% if post_tag.id == tag.id %}active{% endif %}">
+                                {{ post_tag.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    
+                    <p class="post-excerpt">{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'post_detail' pk=post.pk %}" class="read-more">Read more</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No posts found with this tag.</p>
+    {% endif %}
+</div>
+{% endblock %}

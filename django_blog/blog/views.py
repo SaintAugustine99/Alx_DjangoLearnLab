@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, UserUpdateForm, PostForm, CommentForm
@@ -212,3 +212,66 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     
     def get_success_url(self):
         return reverse('post_detail', kwargs={'pk': self.object.post.pk})
+    
+# Adding search functionality
+
+def search_posts(request):
+    query = request.GET.get('q', '')
+    results = []
+    
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) | 
+            Q(tags__name__icontains=query)
+        ).distinct()
+    
+    return render(request, 'blog/search_results.html', {
+        'query': query,
+        'results': results
+    })
+
+def tag_posts(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    posts = tag.posts.all()
+    
+    return render(request, 'blog/tag_posts.html', {
+        'tag': tag,
+        'posts': posts
+    })
+
+@login_required
+def post_new(request):
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            # Save tags (handled in the form's save method)
+            form.save_m2m()
+            messages.success(request, 'Your post has been created!')
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm()
+    return render(request, 'blog/post_edit.html', {'form': form})
+
+@login_required
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    
+    # Check if user is the author
+    if request.user != post.author:
+        messages.error(request, "You can't edit someone else's post.")
+        return redirect('post_detail', pk=post.pk)
+    
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save()
+            messages.success(request, 'Your post has been updated!')
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+    
+    return render(request, 'blog/post_edit.html', {'form': form})

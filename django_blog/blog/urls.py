@@ -34,4 +34,8 @@ urlpatterns = [
     path('comment/<int:pk>/edit/', views.comment_edit, name='comment_edit'),
     path('comment/<int:pk>/update/', views.comment_edit, name='comment_update'),  # Alternative URL pointing to the same view
     path('comment/<int:pk>/delete/', views.comment_delete, name='comment_delete'),
+
+    # Tag URLs
+    path('tag/<slug:slug>/', views.tag_posts, name='tag_posts'),
+    path('search/', views.search_posts, name='search_posts'),
 ]
