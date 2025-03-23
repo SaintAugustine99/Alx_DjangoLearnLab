@@ -6,7 +6,7 @@ from .models import Post, Comment
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, UserUpdateForm, PostForm, CommentForm
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, CommentCreateView, CommentUpdateView, CommentDeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 
@@ -19,7 +19,7 @@ def post_detail(request, pk):
     comments = post.comments.all()  # Get all comments for this post
     
     if request.method == 'POST':
-        comment_form = CommentForm(request.POST)  # Changed variable name from form to comment_form
+        comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
             new_comment.post = post
@@ -28,14 +28,34 @@ def post_detail(request, pk):
             messages.success(request, 'Your comment has been added!')
             return redirect('post_detail', pk=pk)
     else:
-        comment_form = CommentForm()  # Changed variable name from form to comment_form
+        comment_form = CommentForm()
     
-    # Changed the context to use the variables defined above
     return render(request, 'blog/post_detail.html', {
         'post': post,
         'comments': comments,
         'comment_form': comment_form,
-        'new_comment': None  # Initially set to None since we only want to set it when a new comment is created
+        'new_comment': None
+    })
+
+@login_required
+def comment_create(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            messages.success(request, 'Your comment has been added!')
+            return redirect('post_detail', pk=post_id)
+    else:
+        form = CommentForm()
+    
+    return render(request, 'blog/comment_form.html', {
+        'form': form,
+        'post': post
     })
 
 @login_required
@@ -151,3 +171,44 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
+# Class-based comment views (alternative to function-based views)
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        form.instance.post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={'pk': self.kwargs['post_id']})
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+    
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={'pk': self.object.post.pk})
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+    
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+    
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={'pk': self.object.post.pk})
