@@ -6,8 +6,9 @@ from .views import (
     PostDetailView,
     PostCreateView,
     PostUpdateView,
-    PostDeleteView
+    PostDeleteView,
 )
+
 
 urlpatterns = [
     path('', views.post_list, name='post_list'),
@@ -38,4 +39,5 @@ urlpatterns = [
     # Tag URLs
     path('tag/<slug:slug>/', views.tag_posts, name='tag_posts'),
     path('search/', views.search_posts, name='search_posts'),
+    path('tags/<slug:tag_slug>/', PostByTagListView.as_view(), name='tag_posts'),
 ]
