@@ -127,4 +127,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Add these at the end of your settings.py file
 
+# Login redirect
+LOGIN_REDIRECT_URL = 'post_list'
+LOGIN_URL = 'login'
