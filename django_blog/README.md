@@ -37,6 +37,7 @@ CSRF Protection:
 All forms include the {% csrf_token %} tag to protect against Cross-Site Request Forgery.
 
 
+
 Password Hashing:
 
 Django automatically handles secure password storage using hashing algorithms.
@@ -86,3 +87,174 @@ Logout:
 Click "Logout" in the navigation
 You should be redirected to the logout confirmation page
 Navigation should now show "Login" and "Register" options instead of "Profile" and "Logout
+
+
+Blog Post Management System Documentation
+Overview
+The Django Blog Post Management System provides a complete set of CRUD (Create, Read, Update, Delete) operations for blog posts. It allows authenticated users to create posts, view all posts, edit their own posts, and delete their own posts.
+Features
+
+Post Listing (Read - List)
+
+Displays all blog posts in a paginated list
+Shows title, author, publication date, and a content preview
+Accessible to all users (authenticated and non-authenticated)
+
+
+Post Detail (Read - Detail)
+
+Shows the complete content of a single blog post
+Displays title, author, publication date, and full content
+Provides edit and delete options for the post author
+Accessible to all users
+
+
+Post Creation (Create)
+
+Allows authenticated users to create new blog posts
+Provides a form with fields for title and content
+Automatically assigns the current user as the author
+Requires authentication to access
+
+
+Post Editing (Update)
+
+Allows post authors to edit their own posts
+Pre-populates the form with existing post data
+Prevents unauthorized users from editing posts they don't own
+Requires authentication and passes the user test
+
+
+Post Deletion (Delete)
+
+Allows post authors to delete their own posts
+Asks for confirmation before deletion
+Prevents unauthorized users from deleting posts they don't own
+Requires authentication and passes the user test
+
+
+
+Components
+
+Model
+
+Post model with fields for title, content, author, and publication date
+Includes a get_absolute_url method for redirects after operations
+
+
+Views
+
+Class-based views using Django's generic views
+Includes appropriate mixins for authentication and permission checks
+Handles all CRUD operations efficiently
+
+
+Templates
+
+Separate templates for each operation
+Consistent styling and user experience
+Conditional rendering based on user authentication and ownership
+
+
+URLs
+
+Clear and intuitive URL structure
+Easy-to-understand naming convention
+
+
+
+Permission System
+
+View Permissions
+
+List and Detail views: Accessible to all users
+Create view: Requires authentication (LoginRequiredMixin)
+Update and Delete views: Requires authentication and ownership verification (UserPassesTestMixin)
+
+
+Security Checks
+
+CSRF protection on all forms
+User authentication checks
+Post ownership validation
+
+
+
+Testing Guidelines
+
+Post Listing Test
+
+Navigate to the home page (/)
+Verify all posts are displayed
+Check pagination if there are more than 5 posts
+
+
+Post Detail Test
+
+Click on a post title or "Read More" button
+Verify full content is displayed
+Check that edit and delete buttons appear only for your own posts
+
+
+Post Creation Test
+
+Log in with valid credentials
+Navigate to /post/new/
+Fill out the form and submit
+Verify the new post appears in the list and detail views
+
+
+Post Editing Test
+
+Log in as the author of a post
+Navigate to /post/<id>/edit/
+Modify the content and submit
+Verify changes are reflected in the detail view
+
+
+Post Deletion Test
+
+Log in as the author of a post
+Navigate to /post/<id>/delete/
+Confirm deletion
+Verify the post is removed from the list view
+
+
+Permission Test
+
+Attempt to create a post without logging in
+Attempt to edit or delete a post you don't own
+Verify appropriate redirects or error messages
+
+
+
+Usage Instructions
+
+Viewing Posts
+
+All users can view posts by navigating to the home page
+Click on post titles or "Read More" to view full posts
+
+
+Creating Posts
+
+Log in to your account
+Click "New Post" in the navigation bar or on the post list page
+Fill out the form with a title and content
+Click "Create Post" to publish
+
+
+Editing Posts
+
+Log in to your account
+Navigate to a post you authored
+Click the "Edit" button
+Modify the form and click "Update Post"
+
+
+Deleting Posts
+
+Log in to your account
+Navigate to a post you authored
+Click the "Delete" button
+Confirm deletion on the confirmation page

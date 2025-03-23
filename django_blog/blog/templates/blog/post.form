@@ -1,0 +1,53 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Post - Django Blog
+    {% else %}
+        New Post - Django Blog
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>
+            {% if form.instance.pk %}
+                Edit Post
+            {% else %}
+                Create New Post
+            {% endif %}
+        </h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                {{ form.title.label_tag }}
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="form-error">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.content.label_tag }}
+                {{ form.content }}
+                {% if form.content.errors %}
+                    <div class="form-error">{{ form.content.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                {% if form.instance.pk %}
+                    Update Post
+                {% else %}
+                    Create Post
+                {% endif %}
+            </button>
+        </form>
+        
+        <div class="form-footer">
+            <a href="{% url 'post_list' %}">Cancel</a>
+        </div>
+    </div>
+{% endblock %}
