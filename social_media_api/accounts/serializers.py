@@ -1,5 +1,7 @@
 # accounts/serializers.py
 
+# accounts/serializers.py
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
@@ -21,7 +23,11 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         """Create and return a user with encrypted password."""
-        return User.objects.create_user(**validated_data)
+        # Using get_user_model().objects.create_user explicitly as required
+        user = get_user_model().objects.create_user(**validated_data)
+        # Create token for the user
+        Token.objects.create(user=user)
+        return user
     
     def update(self, instance, validated_data):
         """Update and return a user."""
@@ -88,10 +94,3 @@ class AuthTokenSerializer(serializers.Serializer):
         
         attrs['user'] = user
         return attrs
-    
-    def create(self, validated_data):
-    """Create and return a user with encrypted password."""
-     user = get_user_model().objects.create_user(**validated_data)
-    # Create token for the user
-    Token.objects.create(user=user)
-    return user
