@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'book_store.apps.BookStoreConfig',
     # other apps
-    'relationship_app',
+    ,
 ]
 
 MIDDLEWARE = [
