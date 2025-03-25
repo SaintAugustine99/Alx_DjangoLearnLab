@@ -146,3 +146,128 @@ The API returns appropriate HTTP status codes:
 ## License
 
 [MIT License](LICENSE)
+
+Documenting API Endpoints
+Create a simple documentation for your API endpoints. You could create a Markdown file in your project:
+markdownCopy# Posts and Comments API Documentation
+
+## Posts
+
+### List Posts
+- **URL**: `/api/posts/`
+- **Method**: GET
+- **Query Parameters**:
+  - `search`: Search in title and content
+  - `page`: Page number for pagination
+  - `page_size`: Number of results per page (max 100)
+- **Response**: List of posts with pagination
+
+### Create Post
+- **URL**: `/api/posts/`
+- **Method**: POST
+- **Auth**: Required
+- **Body**:
+  ```json
+  {
+    "title": "Post title",
+    "content": "Post content"
+  }
+
+Response: Created post object
+
+Retrieve Post
+
+URL: /api/posts/{id}/
+Method: GET
+Response: Post object with comments
+
+Update Post
+
+URL: /api/posts/{id}/
+Method: PUT/PATCH
+Auth: Required (author only)
+Body: Post fields to update
+Response: Updated post object
+
+Delete Post
+
+URL: /api/posts/{id}/
+Method: DELETE
+Auth: Required (author only)
+Response: 204 No Content
+
+Comments
+List Comments
+
+URL: /api/comments/
+Method: GET
+Query Parameters:
+
+post: Filter by post ID
+page: Page number for pagination
+page_size: Number of results per page (max 100)
+
+
+Response: List of comments with pagination
+
+Create Comment
+
+URL: /api/comments/
+Method: POST
+Auth: Required
+Body:
+jsonCopy{
+  "post": 1,
+  "content": "Comment content"
+}
+
+Response: Created comment object
+
+Retrieve Comment
+
+URL: /api/comments/{id}/
+Method: GET
+Response: Comment object
+
+Update Comment
+
+URL: /api/comments/{id}/
+Method: PUT/PATCH
+Auth: Required (author only)
+Body: Comment fields to update
+Response: Updated comment object
+
+Delete Comment
+
+URL: /api/comments/{id}/
+Method: DELETE
+Auth: Required (author only)
+Response: 204 No Content
+
+Copy
+## Step 11: Test the API
+
+You can test your API using tools like Postman, curl, or the built-in Django REST Framework browsable API. Here's an example of how to test with curl:
+
+```bash
+# List posts
+curl -X GET http://localhost:8000/api/posts/
+
+# Create a post (authenticated)
+curl -X POST http://localhost:8000/api/posts/ \
+  -H "Authorization: Token YOUR_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "My First Post", "content": "This is the content of my post"}'
+
+# List comments for a specific post
+curl -X GET http://localhost:8000/api/comments/?post=1
+That's a step-by-step guide for creating the Post app with all the required functionality. This implementation provides:
+
+Models for Post and Comment
+Serializers for data validation and transformation
+ViewSets for CRUD operations
+Custom permissions for author-only editing
+Pagination for handling large datasets
+Filtering to search posts by title or content
+URL routing with DRF routers
+API documentation

@@ -37,6 +37,9 @@ urlpatterns = [
     
     # DRF authentication
     path('api-auth/', include('rest_framework.urls')),
+
+     # ... other URL patterns
+    path('api/', include('posts.urls')),
 ]
 
 # Serve media files in development
