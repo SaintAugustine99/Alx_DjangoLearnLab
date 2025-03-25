@@ -3,6 +3,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -87,3 +88,10 @@ class AuthTokenSerializer(serializers.Serializer):
         
         attrs['user'] = user
         return attrs
+    
+    def create(self, validated_data):
+    """Create and return a user with encrypted password."""
+    user = User.objects.create_user(**validated_data)
+    # Create token for the user
+    Token.objects.create(user=user)
+    return user
