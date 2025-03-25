@@ -220,3 +220,5 @@ def get_following(request):
     following = request.user.following.all()
     serializer = FollowerSerializer(following, many=True)
     return Response(serializer.data)
+
+#["generics.GenericAPIView", "CustomUser.objects.all()"]
