@@ -222,6 +222,6 @@ def get_following(request):
     return Response(serializer.data)
 
 #generics.GenericAPIView", "CustomUser.objects.all() generics.GenericAPIView", "CustomUser.objects.all()
-#Post.objects.filter(author__in=following_users).order_by"]
-#Post.objects.filter(author__in=following_users) | Q(author=request.user)"] = 
+# Post.objects.filter(author__in=following_users).order_by
+# Post.objects.filter(author__in=following_users) | Q(author=request.user)"] = 
 # "Post.objects.filter(author__in=following_users) | Q()
