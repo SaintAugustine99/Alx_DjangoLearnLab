@@ -40,6 +40,12 @@ urlpatterns = [
 
      # ... other URL patterns
     path('api/', include('posts.urls')),
+
+    # ... other URL patterns
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/posts/', include('posts.urls', namespace='posts')),
+    path('api/', include('notifications.urls', namespace='notifications')),
+
 ]
 
 # Serve media files in development
