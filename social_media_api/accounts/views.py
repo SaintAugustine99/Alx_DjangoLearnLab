@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 # accounts/views.py
@@ -83,7 +83,15 @@ class FollowUserView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
-            request.user.follow(user_to_follow)
+            # Check if already following
+            if user_to_follow in request.user.following.all():
+                return Response(
+                    {'error': 'You are already following this user.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Add the user to following
+            request.user.following.add(user_to_follow)
             return Response(
                 {'message': f'You are now following {user_to_follow.username}.'},
                 status=status.HTTP_200_OK
@@ -98,7 +106,16 @@ class FollowUserView(APIView):
         """Unfollow a user."""
         try:
             user_to_unfollow = User.objects.get(id=user_id)
-            request.user.unfollow(user_to_unfollow)
+            
+            # Check if actually following
+            if user_to_unfollow not in request.user.following.all():
+                return Response(
+                    {'error': 'You are not following this user.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Remove the user from following
+            request.user.following.remove(user_to_unfollow)
             return Response(
                 {'message': f'You have unfollowed {user_to_unfollow.username}.'},
                 status=status.HTTP_200_OK
@@ -120,7 +137,8 @@ class UserFollowersView(generics.ListAPIView):
         user_id = self.kwargs.get('user_id')
         try:
             user = User.objects.get(id=user_id)
-            return user.followers.all()
+            # Changed from followers to followed_by
+            return user.followed_by.all()
         except User.DoesNotExist:
             return User.objects.none()
 
@@ -191,7 +209,7 @@ def unfollow_user(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_followers(request):
-    # Changed from followers to followed_by to match the model change
+    # Changed from followers to followed_by
     followers = request.user.followed_by.all()
     serializer = FollowerSerializer(followers, many=True)
     return Response(serializer.data)
