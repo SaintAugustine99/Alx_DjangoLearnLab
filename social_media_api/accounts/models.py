@@ -15,12 +15,19 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    followers = models.ManyToManyField(
-        'self', 
-        symmetrical=False, 
-        related_name='following',
+    
+    following = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='followed_by',
         blank=True
     )
+
+    def follower_count(self):
+        return self.followed_by.count()
+    
+    def following_count(self):
+        return self.following.count()
     
     # Add timestamps
     created_at = models.DateTimeField(auto_now_add=True)

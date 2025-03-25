@@ -2,10 +2,13 @@
 
 # accounts/serializers.py
 
+# accounts/serializers.py
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
+from django.conf import settings
 
 User = get_user_model()
 
@@ -40,33 +43,34 @@ class UserSerializer(serializers.ModelSerializer):
             
         return user
 
+class UserMinimalSerializer(serializers.ModelSerializer):
+    """Minimal serializer for user representation (used in followers/following lists)."""
+    
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'profile_picture')       
+
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializer for the user profile."""
     
     followers = serializers.SerializerMethodField()
     following = serializers.SerializerMethodField()
     
-    class Meta:
+    class Meta:  # Fixed indentation here
         model = User
         fields = ('id', 'username', 'email', 'bio', 'profile_picture', 
-                  'followers', 'following', 'follower_count', 'following_count', 
-                  'created_at', 'updated_at')
+                'followers', 'following', 'follower_count', 'following_count', 
+                'created_at', 'updated_at')
         read_only_fields = ('email', 'username', 'created_at', 'updated_at')
-    
+
     def get_followers(self, obj):
         """Get the list of followers."""
-        return UserMinimalSerializer(obj.followers.all(), many=True).data
-    
+        # Changed from obj.followers to obj.followed_by
+        return UserMinimalSerializer(obj.followed_by.all(), many=True).data
+
     def get_following(self, obj):
         """Get the list of users being followed."""
         return UserMinimalSerializer(obj.following.all(), many=True).data
-
-class UserMinimalSerializer(serializers.ModelSerializer):
-    """Minimal serializer for user representation (used in followers/following lists)."""
-    
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'profile_picture')
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for user authentication object."""
@@ -94,3 +98,15 @@ class AuthTokenSerializer(serializers.Serializer):
         
         attrs['user'] = user
         return attrs
+
+class UserFollowSerializer(serializers.Serializer):
+    """Serializer for follow/unfollow actions"""
+    user_id = serializers.IntegerField()
+
+class FollowerSerializer(serializers.ModelSerializer):
+    """Serializer for displaying followers/following"""
+    username = serializers.CharField(read_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']

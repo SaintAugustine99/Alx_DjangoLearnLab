@@ -1,10 +1,11 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import viewsets, filters, permissions
+from rest_framework import viewsets, filters, permissions, generics
 from rest_framework.pagination import PageNumberPagination
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
+from django.db.models import Q
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
     """
@@ -46,3 +47,23 @@ class CommentViewSet(viewsets.ModelViewSet):
         if post_id is not None:
             queryset = queryset.filter(post__id=post_id)
         return queryset
+    
+class FeedView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = StandardResultsPagination
+    
+    def get_queryset(self):
+        """
+        This view returns a list of all posts
+        from users that the current user follows,
+        ordered by newest first.
+        """
+        # Get users that the current user follows
+        following_users = self.request.user.following.all()
+        
+        # Get posts from followed users
+        # Optionally include your own posts too
+        return Post.objects.filter(
+            Q(author__in=following_users) | Q(author=self.request.user)
+        ).order_by('-created_at')

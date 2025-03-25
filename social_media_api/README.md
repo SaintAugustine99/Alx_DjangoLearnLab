@@ -271,3 +271,126 @@ Pagination for handling large datasets
 Filtering to search posts by title or content
 URL routing with DRF routers
 API documentation
+
+
+Finally, let's create documentation for these new endpoints:
+markdownCopy# Social Media API - Follow System and Feed
+
+## Follow System
+
+### Follow a User
+- **URL**: `/api/accounts/follow/`
+- **Method**: POST
+- **Auth Required**: Yes
+- **Body**:
+  ```json
+  {
+    "user_id": 2
+  }
+
+Success Response:
+
+Code: 200
+Content: {"detail": "You are now following username."}
+
+
+Error Responses:
+
+Code: 400
+Content: {"detail": "You cannot follow yourself."}
+OR
+Content: {"detail": "You are already following this user."}
+
+
+
+Unfollow a User
+
+URL: /api/accounts/unfollow/
+Method: POST
+Auth Required: Yes
+Body:
+jsonCopy{
+  "user_id": 2
+}
+
+Success Response:
+
+Code: 200
+Content: {"detail": "You have unfollowed username."}
+
+
+Error Response:
+
+Code: 400
+Content: {"detail": "You are not following this user."}
+
+
+
+Get Followers
+
+URL: /api/accounts/followers/
+Method: GET
+Auth Required: Yes
+Response: List of users who follow the authenticated user
+jsonCopy[
+  {
+    "id": 2,
+    "username": "user2",
+    "first_name": "John",
+    "last_name": "Doe"
+  },
+  ...
+]
+
+
+Get Following
+
+URL: /api/accounts/following/
+Method: GET
+Auth Required: Yes
+Response: List of users the authenticated user follows
+jsonCopy[
+  {
+    "id": 3,
+    "username": "user3",
+    "first_name": "Jane",
+    "last_name": "Doe"
+  },
+  ...
+]
+
+
+Feed
+Get Feed
+
+URL: /api/posts/feed/
+Method: GET
+Auth Required: Yes
+Query Parameters:
+
+page: Page number for pagination
+page_size: Number of results per page (max 100)
+
+
+Response: List of posts from followed users, ordered by newest first
+jsonCopy{
+  "count": 42,
+  "next": "http://example.com/api/posts/feed/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "title": "Latest post",
+      "content": "This is the content",
+      "author": 3,
+      "author_username": "user3",
+      "created_at": "2025-03-25T14:30:00Z",
+      "updated_at": "2025-03-25T14:30:00Z",
+      "comments": [],
+      "comment_count": 0
+    },
+    ...
+  ]
+}
+
+
