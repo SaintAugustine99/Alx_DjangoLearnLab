@@ -191,7 +191,8 @@ def unfollow_user(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_followers(request):
-    followers = request.user.followers.all()
+    # Changed from followers to followed_by to match the model change
+    followers = request.user.followed_by.all()
     serializer = FollowerSerializer(followers, many=True)
     return Response(serializer.data)
 
