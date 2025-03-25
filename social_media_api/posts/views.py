@@ -67,3 +67,6 @@ class FeedView(generics.ListAPIView):
         return Post.objects.filter(
             Q(author__in=following_users) | Q(author=self.request.user)
         ).order_by('-created_at')
+    
+    #posts/views.py doesn't contain: ["Post.objects.filter(author__in=following_users).order_by"]
+    
