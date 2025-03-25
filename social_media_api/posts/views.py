@@ -138,5 +138,5 @@ class FeedView(generics.ListAPIView):
             Q(author__in=following_users) | Q(author=self.request.user)
         ).order_by('-created_at')
     
-    #posts/views.py doesn't contain: ["Post.objects.filter(author__in=following_users).order_by"]
+    #posts/views.py doesn't contain: ["Post.objects.filter(author__in=following_users).order_by"]; "generics.get_object_or_404(Post, pk=pk)", "Like.objects.get_or_create(user=request.user, post=post)", "Notification.objects.create"]
     
