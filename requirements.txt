@@ -10,4 +10,3 @@ django-cors-headers==4.0.0
 # Optional for AWS S3 storage
 # django-storages==1.13.2
 # boto3==1.26.146
-EOF
