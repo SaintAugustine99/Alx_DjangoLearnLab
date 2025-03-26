@@ -2,15 +2,13 @@ services:
   - type: web
     name: social-media-api
     env: python
-    buildCommand: |
-      # Locate and use the appropriate requirements file
-      if [ -f requirements.txt ]; then
-        pip install -r requirements.txt
-      elif [ -f social_media_api/requirements.txt ]; then
-        pip install -r social_media_api/requirements.txt
-      else
-        echo "No requirements.txt found"
-        exit 1
-      fi
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn social_media_api.wsgi:application
-    # rest of your configuration...
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: social_media_api.settings_prod
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+    autoDeploy: true
