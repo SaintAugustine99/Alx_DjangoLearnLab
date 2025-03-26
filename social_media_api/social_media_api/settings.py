@@ -154,3 +154,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+
+#SECURE_BROWSER_XSS_FILTER", "X_FRAME_OPTIONS", "SECURE_SSL_REDIRECT
+#
